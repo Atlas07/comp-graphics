@@ -1,0 +1,21 @@
+{
+  "name": "comp_graphics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "chartjs-plugin-zoom": "^0.7.3",
+    "express": "^4.17.1",
+    "mathjs": "^6.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.2"
+  },
+  "scripts": {
+    "start": "nodemon exec app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
