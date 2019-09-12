@@ -12,17 +12,10 @@ if (X.length !== Y.length) {
   throw new Error('Length of X and Y have to be equal');
 }
 
-let sumX = 0;
-let sumY = 0;
-let sumXSquared = 0;
-let sumXY = 0;
-
-X.forEach(item => sumX += item);
-Y.forEach(item => sumY += item);
-for (let i = 0; i < X.length; i++) {
-  sumXSquared += X[i] * X[i];
-}
-X.forEach((itemX, i) => sumXY += itemX * Y[i]);
+const sumX = X.reduce((acc, current) => acc + current);
+let sumY = Y.reduce((acc, current) => acc + current);
+let sumXSquared = X.reduce((acc, current) => acc + current ** 2, 0);
+let sumXY = X.reduce((acc, current, i) => acc + current * Y[i], 0);
 
 console.log('\nSums:')
 console.log('sumX', sumX);
