@@ -1,6 +1,3 @@
-// https://en.wikipedia.org/wiki/Least_squares
-// http://mathprofi.ru/metod_naimenshih_kvadratov.html
-
 const {
   lusolve,
 } = require('mathjs');
@@ -17,7 +14,7 @@ let sumY = Y.reduce((acc, current) => acc + current);
 let sumXSquared = X.reduce((acc, current) => acc + current ** 2, 0);
 let sumXY = X.reduce((acc, current, i) => acc + current * Y[i], 0);
 
-console.log('\nSums:')
+console.log('\nSums:');
 console.log('sumX', sumX);
 console.log('sumY', sumY);
 console.log('sumXSquared', sumXSquared);

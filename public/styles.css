@@ -1,3 +1,5 @@
-body {
-  background: #ccc;
+.inputs {
+  width: 50%;
+  display: flex;
+  margin: 20px;
 }
