@@ -6,12 +6,10 @@ const findRange = (arr, value) => {
   }
 }
 
-const x = [0, 1, 2, 3];
+const x = [0, 1, 2, 3, 4];
 const y = x.map(value => value - 3 * Math.sin(value));
 
-// console.log('x', x);
-// console.log('y', y);
-
+console.log('\n initial values: \n');
 x.forEach((x,i) => {
   console.log({
     x,
@@ -30,13 +28,14 @@ for(let i = 0; i < x.length - 1; i++) {
   b.push(bi);
 }
 
-// console.log('a', a);
-// console.log('b', b);
+console.log('\n coefs: \n');
+console.log('a', a);
+console.log('b', b);
 
 const newX = [];
 const newF = [];
 
-for(let i = 0; i <= 3; i += 0.25) {
+for(let i = 0; i <= 4; i += 0.25) {
   newX.push(i);
 }
 
@@ -45,6 +44,7 @@ newX.forEach(item => {
   newF.push(a[index] * item + b[index]);
 });
 
+console.log('\n interpolated values: \n');
 newX.forEach((x,i) => {
   console.log({
     newX: x,
