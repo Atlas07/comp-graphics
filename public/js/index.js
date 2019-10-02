@@ -87,6 +87,7 @@ const findRange = (arr, value) => {
 const calculateLagrange = (x, X, Y) => {
   let lagrangePol = 0;
 
+  // TODO: do smth with fors
   for (let i = 0; i < X.length; i += 1) {
     let basicsPol = 1;
 
@@ -102,6 +103,7 @@ const calculateLagrange = (x, X, Y) => {
   return lagrangePol;
 };
 
+// TODO: rename
 const calculateLinear = (X, Y) => {
   const a = [];
   const b = [];
@@ -159,10 +161,16 @@ window.onload = () => {
   const step = document.getElementById('step');
 
   calculateButton.addEventListener('click', () => {
-    const { x, y } = getDotsValues();
+    const {
+      x,
+      y,
+    } = getDotsValues();
 
     // Linear
-    const { a, b } = calculateLinear(x, y);
+    const {
+      a,
+      b,
+    } = calculateLinear(x, y);
 
     const newX = [];
     const newF = [];
@@ -191,6 +199,7 @@ window.onload = () => {
     addDot(inputsContainer);
   });
 
+  // * Needs for initial chart render
   drawChart(
     [],
     [],
