@@ -1,23 +1,17 @@
-const fpFix = (n) => (
-  Math.round(n * 100) / 100
-);
-
-const drawChart = (X, Y, approximateLinearY, approximateQuadraticY) => {
+const drawChart = (dots, linear, lagrange) => {
   const ctx = document.getElementById('chart').getContext('2d');
+  // eslint-disable-next-line
   const chart = new Chart(ctx, {
     type: 'line',
     data: {
       datasets: [
         {
           backgroundColor: 'transparent',
-          pointBackgroundColor: 'red',
-          pointBorderColor: 'red',
-          borderColor: 'red',
-          label: 'y = kx + b',
-          data: X.map((x, i) => ({
-            x,
-            y: approximateLinearY[i],
-          })),
+          pointBackgroundColor: 'blue',
+          pointBorderColor: 'blue',
+          borderColor: 'transparent',
+          label: 'dots',
+          data: dots,
         },
         {
           backgroundColor: 'transparent',
@@ -26,22 +20,16 @@ const drawChart = (X, Y, approximateLinearY, approximateQuadraticY) => {
           borderColor: 'green',
           // lineTension: 0.3,
           cubicInterpolationMode: 'monotone',
-          label: 'y = ax^2 + bx + c',
-          data: X.map((x, i) => ({
-            x,
-            y: approximateQuadraticY[i],
-          })),
+          label: 'linear',
+          data: linear,
         },
         {
           backgroundColor: 'transparent',
-          pointBackgroundColor: 'blue',
-          pointBorderColor: 'blue',
-          borderColor: 'transparent',
-          label: 'dots',
-          data: X.map((x, i) => ({
-            x,
-            y: Y[i],
-          })),
+          pointBackgroundColor: 'red',
+          pointBorderColor: 'red',
+          borderColor: 'red',
+          label: 'Lagrange',
+          data: lagrange,
         },
       ],
     },
@@ -51,7 +39,7 @@ const drawChart = (X, Y, approximateLinearY, approximateQuadraticY) => {
           type: 'linear',
           position: 'bottom',
           ticks: {
-            maxRotation: 0
+            maxRotation: 0,
           },
           scaleLabel: {
             labelString: 'X',
@@ -61,83 +49,74 @@ const drawChart = (X, Y, approximateLinearY, approximateQuadraticY) => {
         yAxes: [{
           type: 'linear',
           ticks: {
-            maxRotation: 0
+            maxRotation: 0,
           },
           scaleLabel: {
             labelString: 'Y',
-            display: true
-          }
-        }]
+            display: true,
+          },
+        }],
       },
-      responsive:true,
+      responsive: true,
       maintainAspectRatio: false,
 
       plugins: {
         zoom: {
           pan: {
             enabled: true,
-            mode: 'xy'
+            mode: 'xy',
           },
           zoom: {
             enabled: true,
-            mode: 'xy'
-          }
-        }
+            mode: 'xy',
+          },
+        },
       },
-    }
+    },
   });
 };
 
-const linearApproximation = (X, Y) => {
-  const sumX = X.reduce((acc, current) => acc + current, 0);
-  const sumY = Y.reduce((acc, current) => acc + current, 0);
-  const sumXSquared = X.reduce((acc, current) => acc + current ** 2, 0);
-  const sumXY = X.reduce((acc, current, i) => acc + current * Y[i], 0);
-
-  const [aCoefs, bCoefs] = math.lusolve(
-    [
-      [sumXSquared, sumX],
-      [sumX, X.length]
-    ],
-    [sumXY, sumY],
-  );
-  
-  const [aCoef] = aCoefs;
-  const [bCoef] = bCoefs;
-
-  return {
-    a: aCoef,
-    b: bCoef,
-  };
+const findRange = (arr, value) => {
+  for (let i = 0; i < arr.length - 1; i += 1) {
+    if (value >= arr[i] && value <= arr[i + 1]) {
+      return i;
+    }
+  }
 };
 
-const quadraticApproximation = (X, Y) => {
-  const sumX = X.reduce((acc, current) => acc + current);
-  const sumX2 = X.reduce((acc, current) => acc + current ** 2, 0);
-  const sumX3 = X.reduce((acc, current) => acc + current ** 3, 0);
-  const sumX4 = X.reduce((acc, current) => acc + current ** 4, 0);
+const calculateLagrange = (x, X, Y) => {
+  let lagrangePol = 0;
 
-  const sumY = Y.reduce((acc, current) => acc + current);
-  const sumXY = X.reduce((acc, current, i) => acc + current * Y[i], 0);
-  const sumX2Y = X.reduce((acc, current, i) => acc + current ** 2 * Y[i] , 0);
+  for (let i = 0; i < X.length; i += 1) {
+    let basicsPol = 1;
 
-  const [aCoefs, bCoefs, cCoefs] = math.lusolve(
-    [
-      [sumX4, sumX3, sumX2],
-      [sumX3, sumX2, sumX],
-      [sumX2, sumX, X.length],
-    ],
-    [sumX2Y, sumXY, sumY],
-  );
+    for (let j = 0; j < X.length; j += 1) {
+      if (i === j) continue;
 
-  const [aCoef] = aCoefs;
-  const [bCoef] = bCoefs;
-  const [cCoef] = cCoefs;
+      basicsPol *= (x - X[j]) / (X[i] - X[j]);
+    }
+
+    lagrangePol += basicsPol * Y[i];
+  }
+
+  return lagrangePol;
+};
+
+const calculateLinear = (X, Y) => {
+  const a = [];
+  const b = [];
+
+  for (let i = 0; i < X.length - 1; i += 1) {
+    const ai = (Y[i + 1] - Y[i]) / (X[i + 1] - X[i]);
+    const bi = Y[i] - ai * X[i];
+
+    a.push(ai);
+    b.push(bi);
+  }
 
   return {
-    a: aCoef,
-    b: bCoef,
-    c: cCoef,
+    a,
+    b,
   };
 };
 
@@ -160,50 +139,61 @@ const getDotsValues = () => {
   const inputs = document.querySelectorAll('.inputs');
   const inputsData = [];
 
-  inputs.forEach(input => {
+  inputs.forEach((input) => {
     const x = input.children[0].value;
     const y = input.children[1].value;
 
     inputsData.push({ x, y });
   });
 
-  const x = inputsData.map(item => +item.x);
-  const y = inputsData.map(item => +item.y);
+  const x = inputsData.map((item) => +item.x);
+  const y = inputsData.map((item) => +item.y);
 
   return { x, y };
 };
-
-const setCoef = (node, value) => node.innerHTML = value;
 
 window.onload = () => {
   const calculateButton = document.getElementById('calculate');
   const addDotButton = document.getElementById('add-dot');
   const inputsContainer = document.getElementById('inputs-container');
-
+  const step = document.getElementById('step');
 
   calculateButton.addEventListener('click', () => {
-    const { x, y } = getDotsValues(inputsContainer);
-    const linearCoefs = linearApproximation(x, y);
-    const quadraticCoefs = quadraticApproximation(x, y);
+    const { x, y } = getDotsValues();
 
-    const linearY = x.map(x => linearCoefs.a * x + linearCoefs.b);
-    const quadraticY = x.map(x => quadraticCoefs.a * x * x + quadraticCoefs.b * x + quadraticCoefs.c);
+    // Linear
+    const { a, b } = calculateLinear(x, y);
 
-    drawChart(x, y, linearY, quadraticY);
-    
-    setCoef(document.getElementById('a_1'), `a: ${linearCoefs.a}`);
-    setCoef(document.getElementById('b_1'), `b: ${linearCoefs.b}`);
+    const newX = [];
+    const newF = [];
 
-    setCoef(document.getElementById('a_2'), `a: ${quadraticCoefs.a}`);
-    setCoef(document.getElementById('b_2'), `b: ${quadraticCoefs.b}`);
-    setCoef(document.getElementById('c_2'), `c: ${quadraticCoefs.c}`);
+    // TODO: use reduce
+    for (let i = x[0]; i <= x[x.length - 1]; i += +step.value) {
+      newX.push(i);
+    }
+    // TODO: refactor: use reduce
+    newX.forEach((item) => {
+      const index = findRange(x, item);
+      newF.push(a[index] * item + b[index]);
+    });
+
+    // Lagrange
+    const lagrangeF = newX.map((xi) => calculateLagrange(xi, x, y));
+
+    drawChart(
+      x.map((x, i) => ({ x, y: y[i] })),
+      newX.map((x, i) => ({ x, y: newF[i] })),
+      newX.map((x, i) => ({ x, y: lagrangeF[i] })),
+    );
   });
 
   addDotButton.addEventListener('click', () => {
     addDot(inputsContainer);
   });
 
-  // for intial chart render
-  drawChart([], [], []);
-}
-
+  drawChart(
+    [],
+    [],
+    [],
+  );
+};

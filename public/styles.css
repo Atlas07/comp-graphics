@@ -4,7 +4,7 @@
   height: 50vh;
 }
 
-.inputs {
+.inputs, .inputs_ {
   width: 50%;
   display: flex;
   margin: 20px;
