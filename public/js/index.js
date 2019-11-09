@@ -159,6 +159,8 @@ window.onload = () => {
   const addDotButton = document.getElementById('add-dot');
   const inputsContainer = document.getElementById('inputs-container');
   const step = document.getElementById('step');
+  const result = document.getElementById('resultDot');
+  const resultBtn = document.getElementById('result');
 
   calculateButton.addEventListener('click', () => {
     const {
@@ -193,6 +195,16 @@ window.onload = () => {
       newX.map((x, i) => ({ x, y: newF[i] })),
       newX.map((x, i) => ({ x, y: lagrangeF[i] })),
     );
+
+    resultBtn.addEventListener('click', () => {
+      const index = newX.findIndex(x => x === +result.value);
+      // console.log('index', index);
+
+      // console.log('newF', newF[index]);
+      // console.log('larg', lagrangeF[index]);
+
+      alert(`\n linear: ${newF[index]} \n Largange: ${lagrangeF[index]} \n`);
+    });
   });
 
   addDotButton.addEventListener('click', () => {
