@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "chartjs-plugin-zoom": "^0.7.3",
     "express": "^4.17.1",
     "mathjs": "^6.2.1"
